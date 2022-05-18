@@ -1,19 +1,24 @@
 fun main() {
 
-    val game = UserGame()
+    lateinit var game: Game
+
     do {
+        game = if (try {
+                game is ComputerGame
+            }catch (e: UninitializedPropertyAccessException){
+                true
+            }){
+            UserGame()
+        }else{
+            ComputerGame()
+        }
         game.prepareGame()
         game.playGame()
         game.endGame()
-        if (game.javaClass.name == "UserGame") {
-            ComputerGame()
-        } else {
-            UserGame()
-        }
 
         val continueGame:String = try {
-            print("Press Enter to continue: ")
-            readln() + " "
+            print("Type: \n - Some text + Enter to start new game in your opponent role\n - Only Enter to exit game\n>> ")
+            readln()
         }catch (e:Exception){
             ""
         }
@@ -26,8 +31,8 @@ class UserGame: Game{
     override var number = -1
     override var score = 0
 
-    private var lowerEdge = 0
-    private var topEdge = 100
+    private var lowerEdge = Game.LOWER_EDGE
+    private var topEdge = Game.TOP_EDGE
 
     override fun prepareGame() {
         number = (Game.LOWER_EDGE..Game.TOP_EDGE).random()
